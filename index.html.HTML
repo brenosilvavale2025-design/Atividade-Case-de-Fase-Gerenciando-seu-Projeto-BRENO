@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Projeção - Modelo Exponencial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.7.0/math.min.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="gradient-bg text-white py-8 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold">Simulador de Projeção Exponencial</h1>
+                    <p class="opacity-90">Baseado no projeto com orçamento de R$16.300</p>
+                </div>
+                <img src="https://placehold.co/80x80" alt="Ícone de gráfico de crescimento exponencial com linhas ascendentes azuis e roxas" class="h-16 w-16 rounded-full bg-white p-1">
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- MODELAGEM MATEMÁTICA -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 card-hover">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">🔍 Modelagem Matemática Aplicada</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-gray-700 mb-4">Para modelar o crescimento exponencial no projeto, utilizamos a fórmula:</p>
+                    <div class="bg-indigo-50 p-4 rounded-lg">
+                        <p class="font-mono text-lg">N(t) = N₀ × e<sup>(r×t)</sup></p>
+                    </div>
+                    <div class="mt-4 text-sm text-gray-600">
+                        <p class="font-medium mb-2">Onde:</p>
+                        <ul class="space-y-1">
+                            <li>• <span class="font-semibold">N(t)</span>: Valor no tempo t (usuários, receita)</li>
+                            <li>• <span class="font-semibold">N₀</span>: Valor inicial (100 usuários/R$16.300)</li>
+                            <li>• <span class="font-semibold">r</span>: Taxa de crescimento (15%/mês)</li>
+                            <li>• <span class="font-semibold">t</span>: Tempo em meses</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <p class="text-gray-700 mb-2">Aplicação prática com dados do projeto:</p>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-purple-50 rounded-lg">
+                            <p class="font-medium text-purple-800">Projeção de Usuários</p>
+                            <p class="text-sm mt-1">100 × e<sup>(0.15×12)</sup> = 604 usuários em 12 meses</p>
+                        </div>
+                        
+                        <div class="p-4 bg-blue-50 rounded-lg">
+                            <p class="font-medium text-blue-800">Depreciação de Recursos</p>
+                            <p class="text-sm mt-1">Custos crescem de R$800/mês para R$1,243 em 12 meses</p>
+                        </div>
+                        
+                        <div class="p-4 bg-green-50 rounded-lg">
+                            <p class="font-medium text-green-800">ROI Esperado</p>
+                            <p class="text-sm mt-1">Retorno sobre o investimento em aproximadamente 8 meses</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIMULADOR INTERATIVO -->
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <!-- Controle de Usuários -->
+            <div class="bg-white p-6 rounded-xl shadow-md card-hover">
+                <div class="flex items-center mb-4">
+                    <div class="bg-indigo-100 p-2 rounded-lg mr-3">
+                        <img src="https://placehold.co/40x40" alt="Ícone de usuários com silhuetas de pessoas" class="h-6 w-6">
+                    </div>
+                    <h3 class="text-lg font-semibold">Crescimento de Usuários</h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Usuários Iniciais (N₀)</label>
+                        <input type="range" min="50" max="500" value="100" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="baseUsers">
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>50</span>
+                            <span id="baseUsersValue">100</span>
+                            <span>500</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Taxa de Crescimento (r)</label>
+                        <input type="range" min="1" max="30" value="15" step="0.5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="growthRate">
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>1%</span>
+                            <span id="growthRateValue">15%</span>
+                            <span>30%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-200">
+                        <p class="text-sm text-gray-600">Com estes parâmetros:</p>
+                        <p class="font-medium mt-1">
+                            <span id="projectedUsers">604</span> usuários em 12 meses
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Controle de Receita -->
+            <div class="bg-white p-6 rounded-xl shadow-md card-hover">
+                <div class="flex items-center mb-4">
+                    <div class="bg-green-100 p-2 rounded-lg mr-3">
+                        <img src="https://placehold.co/40x40" alt="Ícone de gráfico de barras verde representando receita" class="h-6 w-6">
+                    </div>
+                    <h3 class="text-lg font-semibold">Projeção de Receita</h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ARPU (Receita por Usuário)</label>
+                        <input type="range" min="5" max="50" value="10" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="arpu">
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>R$5</span>
+                            <span id="arpuValue">R$10</span>
+                            <span>R$50</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Período (meses)</label>
+                        <input type="range" min="3" max="36" value="12" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="timePeriod">
+                        <div class="flex justify-between text-xs text-gray-500">
+                            <span>3</span>
+                            <span id="timePeriodValue">12</span>
+                            <span>36</span>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-200">
+                        <p class="text-sm text-gray-600">Receita projetada:</p>
+                        <p class="font-medium mt-1">
+                            R$ <span id="projectedRevenue">7,248</span> em 12 meses
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Custo e ROI -->
+            <div class="bg-white p-6 rounded-xl shadow-md card-hover">
+                <div class="flex items-center mb-4">
+                    <div class="bg-red-100 p-2 rounded-lg mr-3">
+                        <img src="https://placehold.co/40x40" alt="Ícone de gráfico de pizza vermelho representando custos" class="h-6 w-6">
+                    </div>
+                    <h3 class="text-lg font-semibold">Custos e ROI</h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-700 mb-2">Investimento Inicial:</p>
+                        <div class="bg-gray-100 p-3 rounded-lg">
+                            <p class="font-medium text-gray-800">R$ 16.300,00</p>
+                            <p class="text-xs text-gray-600">(Baseado no cronograma do projeto)</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p class="text-sm font-medium text-gray-700 mb-2">Custos Mensais:</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-red-50 p-2 rounded">
+                                <p class="text-red-800 text-xs">Servidores</p>
+                                <p class="font-medium">R$ <span id="serverCost">500</span></p>
+                            </div>
+                            <div class="bg-red-50 p-2 rounded">
+                                <p class="text-red-800 text-xs">Licenças</p>
+                                <p class="font-medium">R$ <span id="licenseCost">300</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-200">
+                        <p class="text-sm font-medium text-gray-700">ROI Esperado:</p>
+                        <div class="flex items-center mt-2">
+                            <div class="flex-1 bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-green-600 h-2.5 rounded-full" style="width: 65%" id="roiBar"></div>
+                            </div>
+                            <span class="ml-2 text-sm font-medium" id="roiTime">8 meses</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mt-1" id="roiDetail">Retorno previsto em 8 meses</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRÁFICO DE PROJEÇÃO -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 card-hover">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 md:mb-0">Projeção de Crescimento Exponencial</h2>
+                <div class="flex space-x-2">
+                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium" id="btnChartUsers">Usuários</button>
+                    <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium" id="btnChartRevenue">Receita</button>
+                    <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium" id="btnChartCosts">Custos</button>
+                </div>
+            </div>
+            
+            <div class="h-96">
+                <canvas id="exponentialChart"></canvas>
+            </div>
+        </div>
+
+        <!-- TABELA DETALHADA -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8 card-hover">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Detalhamento Mensal</h2>
+                <p class="text-sm text-gray-600 mb-4">Projeção baseada nos parâmetros atuais (modelo exponencial N(t) = N₀ × e<sup>(r×t)</sup>)</p>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mês</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuários</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Receita</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Custos</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lucro</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acumulado</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="projectionTable">
+                        <!-- Preenchido por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos do DOM
+        const baseUsersInput = document.getElementById('baseUsers');
+        const growthRateInput = document.getElementById('growthRate');
+        const arpuInput = document.getElementById('arpu');
+        const timePeriodInput = document.getElementById('timePeriod');
+        
+        const baseUsersValue = document.getElementById('baseUsersValue');
+        const growthRateValue = document.getElementById('growthRateValue');
+        const arpuValue = document.getElementById('arpuValue');
+        const timePeriodValue = document.getElementById('timePeriodValue');
+        const projectedUsers = document.getElementById('projectedUsers');
+        const projectedRevenue = document.getElementById('projectedRevenue');
+        const serverCost = document.getElementById('serverCost');
+        const licenseCost = document.getElementById('licenseCost');
+        const roiTime = document.getElementById('roiTime');
+        const roiBar = document.getElementById('roiBar');
+        const roiDetail = document.getElementById('roiDetail');
+        
+        const projectionTable = document.getElementById('projectionTable');
+        
+        // Configuração do gráfico
+        const ctx = document.getElementById('exponentialChart').getContext('2d');
+        let exponentialChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 12}, (_, i) => `Mês ${i+1}`),
+                datasets: [{
+                    label: 'Usuários',
+                    data: [],
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw.toLocaleString()}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Event listeners
+        baseUsersInput.addEventListener('input', updateProjection);
+        growthRateInput.addEventListener('input', updateProjection);
+        arpuInput.addEventListener('input', updateProjection);
+        timePeriodInput.addEventListener('input', updateProjection);
+        
+        document.getElementById('btnChartUsers').addEventListener('click', () => updateChart('users'));
+        document.getElementById('btnChartRevenue').addEventListener('click', () => updateChart('revenue'));
+        document.getElementById('btnChartCosts').addEventListener('click', () => updateChart('costs'));
+
+        // Inicialização
+        updateProjection();
+
+        // Função principal de atualização
+        function updateProjection() {
+            // Atualiza valores exibidos
+            baseUsersValue.textContent = baseUsersInput.value;
+            growthRateValue.textContent = growthRateInput.value + '%';
+            arpuValue.textContent = 'R$' + arpuInput.value;
+            timePeriodValue.textContent = timePeriodInput.value;
+            
+            // Parâmetros do cálculo
+            const N0 = parseInt(baseUsersInput.value);
+            const r = parseFloat(growthRateInput.value) / 100;
+            const ARPU = parseInt(arpuInput.value);
+            const months = parseInt(timePeriodInput.value);
+            const initialInvestment = 16300;
+            const baseServerCost = 500;
+            const baseLicenseCost = 300;
+            
+            // Arrays para armazenar os dados
+            const monthsArray = Array.from({length: months}, (_, i) => i + 1);
+            const usersArray = [];
+            const revenueArray = [];
+            const serverCostArray = [];
+            const licenseCostArray = [];
+            const totalCostArray = [];
+            const profitArray = [];
+            const accumulatedProfitArray = [];
+            
+            let accumulatedProfit = -initialInvestment; // Inicia negativo com o investimento inicial
+            let roiAchievedMonth = months + 1; // Valor maior que meses para indicar não alcançado
+            
+            // Preenche os arrays com projeções
+            monthsArray.forEach(month => {
+                // Cálculo exponencial de usuários
+                const users = N0 * math.exp(r * month);
+                usersArray.push(users);
+                
+                // Receita baseada nos usuários
+                const revenue = users * ARPU;
+                revenueArray.push(revenue);
+                
+                // Custos escalam com número de usuários (função degrau)
+                const serverCostMonth = baseServerCost * (1 + Math.floor(users / 300) * 0.25);
+                const licenseCostMonth = baseLicenseCost * (1 + Math.floor(users / 500) * 0.2);
+                const totalCostMonth = serverCostMonth + licenseCostMonth;
+                
+                serverCostArray.push(serverCostMonth);
+                licenseCostArray.push(licenseCostMonth);
+                totalCostArray.push(totalCostMonth);
+                
+                // Lucro e acumulado
+                const profit = revenue - totalCostMonth;
+                accumulatedProfit += profit;
+                profitArray.push(profit);
+                accumulatedProfitArray.push(accumulatedProfit);
+                
+                // Verifica ROI (quando acumulado vira positivo)
+                if (accumulatedProfit >= 0 && roiAchievedMonth > month) {
+                    roiAchievedMonth = month;
+                }
+            });
+            
+            // Atualiza valores nos cards
+            projectedUsers.textContent = Math.round(usersArray[usersArray.length-1]).toLocaleString();
+            projectedRevenue.textContent = Math.round(revenueArray[revenueArray.length-1]).toLocaleString('pt-BR');
+            serverCost.textContent = Math.round(serverCostArray[serverCostArray.length-1]).toLocaleString('pt-BR');
+            licenseCost.textContent = Math.round(licenseCostArray[licenseCostArray.length-1]).toLocaleString('pt-BR');
+            
+            // Atualiza ROI
+            if (roiAchievedMonth <= months) {
+                roiTime.textContent = roiAchievedMonth + ' meses';
+                roiDetail.textContent = `Retorno obtido no mês ${roiAchievedMonth}`;
+                roiBar.style.width = Math.min(100, (roiAchievedMonth / months) * 100) + '%';
+                roiBar.className = 'bg-green-600 h-2.5 rounded-full';
+            } else {
+                roiTime.textContent = months + ' meses+';
+                roiDetail.textContent = 'Retorno não alcançado no período';
+                roiBar.style.width = '100%';
+                roiBar.className = 'bg-yellow-500 h-2.5 rounded-full';
+            }
+            
+            // Atualiza tabela
+            updateTable(monthsArray, usersArray, revenueArray, totalCostArray, profitArray, accumulatedProfitArray);
+            
+            // Atualiza gráfico
+            updateChart('users');
+        }
+        
+        // Atualiza o gráfico conforme o tipo selecionado
+        function updateChart(type) {
+            const months = parseInt(timePeriodInput.value);
+            const N0 = parseInt(baseUsersInput.value);
+            const r = parseFloat(growthRateInput.value) / 100;
+            const ARPU = parseInt(arpuInput.value);
+            
+            const labels = Array.from({length: months}, (_, i) => `Mês ${i+1}`);
+            let data = [];
+            let label = '';
+            let color = '';
+            
+            switch(type) {
+                case 'users':
+                    data = Array.from({length: months}, (_, i) => 
+                        Math.round(N0 * math.exp(r * (i+1)))
+                    );
+                    label = 'Usuários';
+                    color = '#4f46e5';
+                    document.getElementById('btnChartUsers').className = 'px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium';
+                    document.getElementById('btnChartRevenue').className = document.getElementById('btnChartCosts').className = 'px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium';
+                    break;
+                    
+                case 'revenue':
+                    data = Array.from({length: months}, (_, i) => 
+                        Math.round(N0 * math.exp(r * (i+1)) * ARPU)
+                    );
+                    label = 'Receita (R$)';
+                    color = '#10b981';
+                    document.getElementById('btnChartRevenue').className = 'px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium';
+                    document.getElementById('btnChartUsers').className = document.getElementById('btnChartCosts').className = 'px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium';
+                    break;
+                    
+                case 'costs':
+                    const baseServerCost = 500;
+                    const baseLicenseCost = 300;
+                    data = Array.from({length: months}, (_, i) => {
+                        const users = N0 * math.exp(r * (i+1));
+                        const serverCost = baseServerCost * (1 + Math.floor(users / 300) * 0.25);
+                        const licenseCost = baseLicenseCost * (1 + Math.floor(users / 500) * 0.2);
+                        return Math.round(serverCost + licenseCost);
+                    });
+                    label = 'Custos (R$)';
+                    color = '#ef4444';
+                    document.getElementById('btnChartCosts').className = 'px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium';
+                    document.getElementById('btnChartUsers').className = document.getElementById('btnChartRevenue').className = 'px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium';
+                    break;
+            }
+            
+            exponentialChart.data.labels = labels;
+            exponentialChart.data.datasets = [{
+                label: label,
+                data: data,
+                borderColor: color,
+                backgroundColor: color + '20',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4
+            }];
+            exponentialChart.options.scales.y.title = { display: true, text: label };
+            exponentialChart.update();
+        }
+        
+        // Atualiza a tabela de projeção
+        function updateTable(months, users, revenue, costs, profit, accumulated) {
+            let tableHTML = '';
+            
+            months.forEach((month, index) => {
+                // Mostra todos os meses se forem poucos, ou mostra a cada 3 meses se forem muitos
+                if (months.length <= 12 || month === 1 || month === months.length || month % 3 === 0) {
+                    tableHTML += `
+                        <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${month}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${Math.round(users[index]).toLocaleString()}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">R$ ${Math.round(revenue[index]).toLocaleString('pt-BR')}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">R$ ${Math.round(costs[index]).toLocaleString('pt-BR')}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm ${profit[index] >= 0 ? 'text-green-600 font-medium' : 'text-red-600'}">R$ ${Math.round(profit[index]).toLocaleString('pt-BR')}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm ${accumulated[index] >= 0 ? 'text-green-600 font-medium' : 'text-gray-500'}">R$ ${Math.round(accumulated[index]).toLocaleString('pt-BR')}</td>
+                        </tr>
+                    `;
+                }
+            });
+            
+            projectionTable.innerHTML = tableHTML;
+        }
+    </script>
+</body>
+</html>
